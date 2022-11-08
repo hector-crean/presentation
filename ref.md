@@ -1,0 +1,1 @@
+https://www.viget.com/articles/typing-components-in-svelte/

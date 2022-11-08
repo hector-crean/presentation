@@ -1,109 +1,49 @@
 <script lang="ts">
-  /**
-   * The HTML Element to observe.
-   * @type {HTMLElement}
-   */
-  export let element: HTMLElement | null = null;
+  import { Observable } from "rxjs";
+  import { onMount } from "svelte";
+  import { writable } from "svelte/store";
 
-  /**
-   * Set to `true` to unobserve the element
-   * after it intersects the viewport.
-   * @type {boolean}
-   */
-  export let once = false;
+  let wrapperEl: HTMLElement;
 
-  /**
-   * `true` if the observed element
-   * is intersecting the viewport.
-   */
-  export let intersecting = false;
+  const intersectionObserver = <T extends HTMLElement>(
+    element: T,
+    options?: IntersectionObserverInit
+  ): Observable<IntersectionObserverEntry> => {
+    return new Observable<IntersectionObserverEntry>((subscriber) => {
+      const intersectionObserver = new IntersectionObserver(
+        (entries: IntersectionObserverEntry[]) => {
+          for (let entry of entries) {
+            if (entry.target === element) {
+              subscriber.next(entry);
+              break;
+            }
+          }
+        },
+        options
+      );
 
-  /**
-   * Specify the containing element.
-   * Defaults to the browser viewport.
-   * @type {HTMLElement}
-   */
-  export let root: HTMLElement = null;
+      intersectionObserver.observe(element);
 
-  /** Margin offset of the containing element. */
-  export let rootMargin = "0px";
-
-  /**
-   * Percentage of element visibility to trigger an event.
-   * Value must be between 0 and 1.
-   */
-  export let threshold = 0;
-
-  /**
-   * Observed element metadata.
-   * @type {null | IntersectionObserverEntry}
-   */
-  export let entry: null | IntersectionObserverEntry = null;
-
-  /**
-   * `IntersectionObserver` instance.
-   * @type {null | IntersectionObserver}
-   */
-  export let observer: null | IntersectionObserver = null;
-
-  import { afterUpdate, createEventDispatcher, onMount, tick } from "svelte";
-
-  const dispatch = createEventDispatcher();
-
-  let prevRootMargin = null;
-  let prevElement = null;
-
-  const initialize = () => {
-    observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((_entry) => {
-          entry = _entry;
-          intersecting = _entry.isIntersecting;
-        });
-      },
-      { root, rootMargin, threshold }
-    );
+      return () => {
+        intersectionObserver.unobserve(element);
+        intersectionObserver.disconnect();
+      };
+    });
   };
 
+  const intersecting = writable<boolean>(false);
+
   onMount(() => {
-    initialize();
+    const intersectionObserver$ = intersectionObserver(wrapperEl);
 
-    return () => {
-      if (observer) {
-        observer.disconnect();
-        observer = null;
-      }
-    };
-  });
+    const subscription = intersectionObserver$.subscribe((entry) => {
+      $intersecting = entry.isIntersecting;
+    });
 
-  afterUpdate(async () => {
-    if (entry !== null) {
-      dispatch("observe", entry);
-
-      if (entry.isIntersecting) {
-        dispatch("intersect", entry);
-
-        if (once) observer.unobserve(element);
-      }
-    }
-
-    await tick();
-
-    if (element !== null && element !== prevElement) {
-      observer.observe(element);
-
-      if (prevElement !== null) observer.unobserve(prevElement);
-      prevElement = element;
-    }
-
-    if (prevRootMargin && rootMargin !== prevRootMargin) {
-      observer.disconnect();
-      prevElement = null;
-      initialize();
-    }
-
-    prevRootMargin = rootMargin;
+    return () => subscription.unsubscribe();
   });
 </script>
 
-<slot {intersecting} {entry} {observer} />
+<div bind:this={wrapperEl}>
+  <slot intersecting={$intersecting} />
+</div>
