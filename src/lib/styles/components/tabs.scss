@@ -1,0 +1,37 @@
+@import "../mixins/button.scss";
+
+button[id*="headlessui-tabs-tab"] {
+  @include button-bg(grey);
+  position: relative;
+  display: inline-block;
+  // stylelint-disable-next-line primer/spacing
+  padding: 0;
+  // stylelint-disable-next-line primer/typography
+  line-height: 20px; // Specifically not inherit our `<body>` default
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 0 line;
+  appearance: none; // Corrects inability to style clickable `input` types in iOS.
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: default;
+  }
+
+  &[aria-selected="true"] {
+  }
+  &[aria-selected="false"] {
+  }
+  &[disabled] {
+  }
+}
+
+*[id*="headlessui-tabs-panel"] {
+  width: 100%;
+}

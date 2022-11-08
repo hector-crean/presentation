@@ -1,0 +1,8 @@
+@use 'sass:map';
+
+$layers: (
+	'frame': 0,
+	'webgl-canvas': 1,
+	'svg': 2,
+	'html-overlay': 3
+);
