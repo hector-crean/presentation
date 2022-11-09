@@ -3,6 +3,10 @@
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
+  // interface $$Props {
+
+  // }
+
   let wrapperEl: HTMLElement;
 
   const intersectionObserver = <T extends HTMLElement>(

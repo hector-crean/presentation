@@ -2,6 +2,7 @@
   import { colorThemeStore } from "$lib/components/theme/color-theme.store";
   import DefiningObesity from "$lib/svelte-svgs/DefiningObesity.svelte";
   import USObesity from "$lib/svelte-svgs/USObesity.svelte";
+  import FadeInBlock from "$lib/components/FadeInBlock.svelte";
 
   import DrawnPfizer from "$lib/components/DrawnPfizer.svelte";
   import IntersectionObserver from "$lib/components/IntersectionObserver.svelte";
@@ -74,17 +75,22 @@
       <img src={ritonavirPng} alt="ritonavir" />
     </section>
     <section>
-      Pfizer is among the world’s largest pharmaceutical companies and one of
-      the most recognizable brands across all industries. After more than 170
-      years, the company has arrived at a new era. Narrowing its focus, Pfizer
-      had undertaken an ambitious transformation at the most significant moment
-      in the company’s history — at the height of the COVID-19 pandemic. As a
-      result, they have reclaimed their role as trailblazing scientific
-      researchers, makers, and doers with a bold and confident outlook: the new
-      Pfizer is not only treating difficult diseases — they’re curing them. To
-      mark this evolution, Pfizer enlisted Team to create a new identity that
-      celebrated its storied history, while signaling a new chapter for the
-      company from scientific fast follower to innovative science leader.
+      <FadeInBlock>
+        <p>
+          Pfizer is among the world’s largest pharmaceutical companies and one
+          of the most recognizable brands across all industries. After more than
+          170 years, the company has arrived at a new era. Narrowing its focus,
+          Pfizer had undertaken an ambitious transformation at the most
+          significant moment in the company’s history — at the height of the
+          COVID-19 pandemic. As a result, they have reclaimed their role as
+          trailblazing scientific researchers, makers, and doers with a bold and
+          confident outlook: the new Pfizer is not only treating difficult
+          diseases — they’re curing them. To mark this evolution, Pfizer
+          enlisted Team to create a new identity that celebrated its storied
+          history, while signaling a new chapter for the company from scientific
+          fast follower to innovative science leader.
+        </p>
+      </FadeInBlock>
     </section>
     <section>
       <IntersectionObserver let:intersecting>
@@ -97,7 +103,7 @@
     <ScrollCorridor
       let:progressionRatio
       handleReachedEndOfCorridor={() => {
-        router.goto("/section/2");
+        router.goto("/2");
       }}
     >
       <div class="ring-container">

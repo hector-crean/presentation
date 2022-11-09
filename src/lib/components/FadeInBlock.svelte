@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IntersectionObserver from "@/components/IntersectionObserver.svelte";
+  import IntersectionObserver from "$lib/components/IntersectionObserver.svelte";
 
   let sectionEl: HTMLElement;
   let isIntersecting: boolean = false;
