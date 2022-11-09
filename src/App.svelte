@@ -1,11 +1,30 @@
 <script lang="ts">
-  import SlideDeck from "$lib/layouts/SlideDeck.svelte";
+  import { fade } from "svelte/transition";
+  import { Route } from "tinro";
+
+  import ColorTheme from "$lib/components/theme/ColorTheme.svelte";
+  import SlideDeck from "src/pages/SlideDeck.svelte";
 </script>
 
-<SlideDeck />
+<ColorTheme>
+  <Route path="/section/*">
+    <Route path="/1">
+      <div
+        class="page-transition"
+        transition:fade={{ duration: 2000, delay: 1000 }}
+      >
+        <SlideDeck />
+      </div>
+    </Route>
+    <Route path="/2">
+      <div>Another section</div>
+    </Route>
+  </Route>
+</ColorTheme>
 
 <style lang="scss">
-  .flex {
-    display: flex;
+  .page-transition {
+    width: 100%;
+    height: 100%;
   }
 </style>

@@ -1,30 +1,34 @@
 <script lang="ts">
 </script>
 
-<main class="article-layout">
+<article>
   <slot />
-</main>
+</article>
 
 <style lang="scss" global>
-  .article-layout {
+  article {
+    background-color: var(--bg-theme-color-1);
+    color: var(--text-theme-color-1);
     display: grid;
     grid-template-columns:
       1fr
       min(65ch, 100%)
       1fr;
-  }
 
-  .article-layout > section {
-    margin-top: 19.2rem;
-    margin-left: auto;
-    margin-right: auto;
-    grid-column: 2;
-  }
-  .article-layout > section[data-fullbleed="true"] {
-    width: 100%;
-    grid-column: 1 / -1;
-  }
+    & :first-child {
+      margin-top: 0rem;
+    }
 
-  section[data-kind="media"] {
+    & > section {
+      margin-top: var(--space-3xl);
+      margin-left: auto;
+      margin-right: auto;
+      grid-column: 2;
+
+      &[data-fullbleed="true"] {
+        width: 100%;
+        grid-column: 1 / -1;
+      }
+    }
   }
 </style>

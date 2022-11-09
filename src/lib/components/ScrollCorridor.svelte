@@ -1,55 +1,73 @@
 <script lang="ts">
-    import type { ObserverEventDetails, Options } from "svelte-inview";
-    import { inview } from "svelte-inview";
-    import { writable } from "svelte/store";
+  import type { ObserverEventDetails, Options } from "svelte-inview";
+  import { inview } from "svelte-inview";
+  import { writable } from "svelte/store";
 
-    const clamp = (num: number, min: number, max: number) =>
-        Math.min(Math.max(num, min), max);
+  interface $$Props {
+    handleReachedEndOfCorridor?: () => void;
+  }
 
-    interface $$Props {}
+  export let handleReachedEndOfCorridor: () => void = () => {};
 
-    // interface $$Slots {
-    //     intersecting: boolean;
-    // }
+  const clamp = (num: number, min: number, max: number) =>
+    Math.min(Math.max(num, min), max);
 
-    let scrollCorrdiorEl: HTMLElement;
-    let innerHeight: number = 0;
+  interface $$Props {}
 
-    const fullyIntersecting = writable(false);
-    const progressionRatio = writable(0);
+  // interface $$Slots {
+  //     intersecting: boolean;
+  // }
 
-    const options: Options = {
-        unobserveOnEnter: false,
-    };
+  let scrollCorrdiorEl: HTMLElement;
+  let innerHeight: number = 0;
 
-    const handleObserverChange = ({
-        detail,
-    }: CustomEvent<ObserverEventDetails>) => {
-        $fullyIntersecting = detail.inView;
-    };
+  const fullyIntersecting = writable(false);
+  const progressionRatio = writable(0);
 
-    const handleWheel = () => {
-        if (fullyIntersecting) {
-            const rect = scrollCorrdiorEl.getBoundingClientRect();
-            $progressionRatio = clamp(
-                -rect.top / (rect.height - innerHeight),
-                0,
-                100
-            );
-        }
-    };
+  const options: Options = {
+    unobserveOnEnter: false,
+  };
+
+  const handleObserverChange = ({
+    detail,
+  }: CustomEvent<ObserverEventDetails>) => {
+    $fullyIntersecting = detail.inView;
+  };
+
+  const handleWheel = () => {
+    if (fullyIntersecting) {
+      const rect = scrollCorrdiorEl.getBoundingClientRect();
+      $progressionRatio = clamp(
+        -rect.top / (rect.height - innerHeight),
+        0,
+        100
+      );
+    }
+  };
+
+  $: if ($progressionRatio > 0.99) {
+    handleReachedEndOfCorridor();
+  }
 </script>
 
 <svelte:window on:wheel={handleWheel} bind:innerHeight />
 
-<section
-    bind:this={scrollCorrdiorEl}
-    use:inview={options}
-    on:change={handleObserverChange}
-    on:wheel={handleWheel}
+<div
+  class="scroll-corridor"
+  bind:this={scrollCorrdiorEl}
+  use:inview={options}
+  on:change={handleObserverChange}
+  on:wheel={handleWheel}
 >
-    <slot
-        fullyIntersecting={$fullyIntersecting}
-        progressionRatio={$progressionRatio}
-    />
-</section>
+  <slot
+    fullyIntersecting={$fullyIntersecting}
+    progressionRatio={$progressionRatio}
+  />
+</div>
+
+<style lang="scss">
+  .scroll-corridor {
+    width: 100%;
+    height: 100%;
+  }
+</style>
